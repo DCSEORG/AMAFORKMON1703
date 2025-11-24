@@ -1,11 +1,13 @@
 using ExpenseManagementApp.Services;
 using ExpenseManagementApp.Models;
+using OpenAI.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<ExpenseService>();
+builder.Services.AddSingleton<ChatService>();
 
 // Add API controllers and Swagger
 builder.Services.AddControllers();
@@ -108,4 +110,26 @@ api.MapGet("/statuses", async (ExpenseService service) =>
     return Results.Ok(statuses);
 }).WithName("GetAllStatuses");
 
+// Chat API
+api.MapPost("/chat", async (ChatRequest request, ChatService chatService) =>
+{
+    var history = new List<ChatMessage>();
+    
+    // Convert request history to ChatMessage objects
+    foreach (var msg in request.ConversationHistory ?? new())
+    {
+        if (msg.Role == "user")
+            history.Add(new UserChatMessage(msg.Content));
+        else if (msg.Role == "assistant")
+            history.Add(new AssistantChatMessage(msg.Content));
+    }
+    
+    var response = await chatService.GetChatResponseAsync(request.Message, history);
+    return Results.Ok(new { response });
+}).WithName("ChatWithAI");
+
 app.Run();
+
+// Request models
+public record ChatRequest(string Message, List<ConversationMessage>? ConversationHistory);
+public record ConversationMessage(string Role, string Content);

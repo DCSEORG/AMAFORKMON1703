@@ -44,6 +44,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Azure.AI.OpenAI": {
+              "target": "Package",
+              "version": "[2.0.0, )"
+            },
             "Azure.Identity": {
               "target": "Package",
               "version": "[1.12.0, )"

@@ -1,5 +1,26 @@
 -- Stored Procedures for Expense Management System
 -- All data access should go through these stored procedures
+--
+-- CONVENTIONS:
+-- - All procedures follow naming pattern: [Action][Entity][Filter]
+-- - Get* procedures return result sets
+-- - Create* procedures return new ID via SELECT
+-- - Update*/Delete* procedures return @@ROWCOUNT
+-- - All dates are DateTime2 (UTC)
+-- - Currency amounts stored as INT (minor units, e.g., pence)
+-- - Amount conversions: AmountMinor = Amount * 100
+--
+-- PARAMETER TYPES:
+-- - IDs: INT
+-- - Names/Descriptions: NVARCHAR
+-- - Amounts: INT (minor units) or DECIMAL (display)
+-- - Dates: DATE or DATETIME2
+--
+-- RETURN VALUES:
+-- - Query procedures: Result set(s)
+-- - Insert procedures: New ID as scalar
+-- - Update/Delete procedures: Rows affected as scalar
+--
 
 SET NOCOUNT ON;
 GO
